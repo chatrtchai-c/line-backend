@@ -4,7 +4,7 @@ const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 // ตั้งค่าตัวเชื่อมต่อ LINE
-const client = new line.Client({
+const client = new line.messagingApi.MessagingApiClient({
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN
 });
 
@@ -29,9 +29,14 @@ cron.schedule('*/10 * * * *', async () => {
             // 3. ส่งข้อความอวยพร
             for (const user of birthdayUsers) {
 
-                await client.pushMessage(user.line_user_id, {
-                    type: 'text',
-                    text: `สุขสันต์วันเกิดครับคุณ ${user.first_name}! 🎂 ขอให้มีความสุขมากๆ และสมหวังในทุกๆ เรื่องนะครับ 🎉`
+                await client.pushMessage({
+                    to: user.line_user_id,
+                    messages: [
+                        {
+                            type: 'text',
+                            text: `สุขสันต์วันเกิดครับคุณ ${user.first_name}! 🎂 ขอให้มีความสุขมากๆ และสมหวังในทุกๆ เรื่องนะครับ 🎉`
+                        }
+                    ]
                 });
 
                 console.log(`ส่งข้อความอวยพรให้ ${user.first_name} สำเร็จ`);
