@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
-require('./cron');
 
 const supabaseURL = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -18,16 +17,16 @@ const PORT = process.env.PORT || 3000;
 
 // Define Routes
 // * GET
-app.get('/user/:line_user_id', async (req, res) => {
+app.get('/user/:student_id', async (req, res) => {
     try {
 
-        const { line_user_id } = req.params;
+        const { student_id } = req.params;
 
-        const { data, error } = await supabase.from('users').select('*').eq('line_user_id', line_user_id).single();
+        const { data, error } = await supabase.from('users').select('*').eq('student_id', student_id).single();
 
         if (error) throw error;
 
-        res.status(200).json({ message: 'User Found!', data});
+        res.status(200).json({ message: 'User Found!', data });
 
     } catch (error) {
         console.error('Error: ', error.message);
@@ -39,21 +38,21 @@ app.get('/user/:line_user_id', async (req, res) => {
 app.post('/register', async (req, res) => {
     try {
         const {
-            line_user_id, student_id, first_name, last_name,
+            student_id, first_name, last_name,
             faculty, department, major, phone_number, email, birth_date
         } = req.body;
 
         const { data, error } = await supabase.from('users').insert([
             {
-                line_user_id, student_id, first_name, last_name,
+                student_id, first_name, last_name,
                 faculty, department, major, phone_number, email, birth_date
             }
         ]);
 
-    if (error) throw error;
+        if (error) throw error;
 
-    res.status(200).json({ message: 'Registeration Success.', data });
-    
+        res.status(200).json({ message: 'Registeration Success.', data });
+
     } catch (error) {
         console.error('Error:', error.message);
         res.status(500).json({ error: error.message });
@@ -61,5 +60,5 @@ app.post('/register', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server starting ... on Port ${PORT}`);
+    console.log(`🚀 Server starting ... on Port ${PORT}`);
 });
