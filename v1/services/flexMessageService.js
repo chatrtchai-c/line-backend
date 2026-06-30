@@ -68,7 +68,7 @@ function createEmployeeBubble(employee, frontendUrl) {
                     align: 'center'
                 }
             ],
-            backgroundColor: '#1E293B',
+            backgroundColor: '#ff5100',
             paddingAll: 'md'
         },
         body: {
@@ -248,7 +248,7 @@ function createEmployeeBubble(employee, frontendUrl) {
                         label: 'ดูโปรไฟล์บนระบบ',
                         uri: `${frontendUrl}/profile`
                     },
-                    color: '#1E293B',
+                    color: '#ff5100',
                     style: 'primary'
                 }
             ],
