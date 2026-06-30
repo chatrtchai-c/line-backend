@@ -70,9 +70,13 @@ async function handleEvent(event) {
                 ]
             });
         }
+
+        console0.log(userSearchState);
         
         if (userId && userSearchState[userId] === 'WAITING_FOR_KEYWORD') {
             delete userSearchState[userId];
+
+            console.log("user message: ", userMessage);
 
             try {
                 // Regular Expression:
@@ -114,7 +118,7 @@ async function handleEvent(event) {
                 // Robust parsing of employee array
                 let employees = [];
                 if (data) {
-                    employees = data.items.content;
+                        employees = data.items.content;
                     console.log('Parsed from data.items.content:', employees);
                 }
 
@@ -140,15 +144,15 @@ async function handleEvent(event) {
 
             } catch (error) {
                 console.error("Error searching employee:", error);
-                return await client.replyMessage({
-                    replyToken: event.replyToken,
-                    messages: [
-                        {
-                            type: 'text',
-                            text: 'เกิดข้อผิดพลาดในระบบค้นหา กรุณาลองใหม่อีกครั้ง'
-                        }
-                    ]
-                });
+                    return await client.replyMessage({
+                        replyToken: event.replyToken,
+                        messages: [
+                            {
+                                type: 'text',
+                                text: 'เกิดข้อผิดพลาดในระบบค้นหา กรุณาลองใหม่อีกครั้ง'
+                            }
+                        ]
+                    });
             }
         }
     }

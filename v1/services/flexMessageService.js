@@ -53,7 +53,15 @@ function createEmployeeBubble(employee, frontendUrl) {
     }
 
     const startDateTh = formatThaiDate(employee.startDate);
-    const avatarUrl = employee.picture || employee.avatar || defaultAvatar;
+    const rawAvatarUrl = employee.picture || employee.avatar || defaultAvatar;
+    let avatarUrl = defaultAvatar;
+    if (typeof rawAvatarUrl === 'string') {
+        if (rawAvatarUrl.startsWith('https://')) {
+            avatarUrl = rawAvatarUrl;
+        } else if (rawAvatarUrl.startsWith('http://')) {
+            avatarUrl = rawAvatarUrl.replace('http://', 'https://');
+        }
+    }
 
     return {
         type: 'bubble',
@@ -89,8 +97,7 @@ function createEmployeeBubble(employee, frontendUrl) {
                             url: avatarUrl,
                             size: 'md',
                             aspectRatio: '1:1',
-                            aspectMode: 'cover',
-                            style: 'normal'
+                            aspectMode: 'cover'
                         }
                     ],
                     margin: 'md',
