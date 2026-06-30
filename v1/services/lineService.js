@@ -117,12 +117,16 @@ async function handleEvent(event) {
                 if (data) {
                     if (Array.isArray(data.employees)) {
                         employees = data.employees;
+                        console.log('Parsed from data.employees:', employees);
                     } else if (data.items && Array.isArray(data.items.content)) {
                         employees = data.items.content;
+                        console.log('Parsed from data.items.content:', employees);
                     } else if (Array.isArray(data)) {
                         employees = data;
+                        console.log('Parsed from array data:', employees);
                     } else if (typeof data === 'object') {
                         employees = [data];
+                        console.log('Parsed from single object:', employees);
                     }
                 }
 
