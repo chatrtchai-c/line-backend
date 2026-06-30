@@ -71,7 +71,7 @@ async function handleEvent(event) {
             });
         }
 
-        console0.log(userSearchState);
+        console.log(userSearchState);
         
         if (userId && userSearchState[userId] === 'WAITING_FOR_KEYWORD') {
             delete userSearchState[userId];

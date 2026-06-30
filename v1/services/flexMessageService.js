@@ -3,8 +3,6 @@
  * Generates LINE Flex Message payloads for showing employee search results.
  */
 
-const defaultAvatar = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-
 /**
  * Formats a date string into Thai format.
  * @param {string} dateStr - ISO Date String
@@ -53,15 +51,6 @@ function createEmployeeBubble(employee, frontendUrl) {
     }
 
     const startDateTh = formatThaiDate(employee.startDate);
-    const rawAvatarUrl = employee.picture || employee.avatar || defaultAvatar;
-    let avatarUrl = defaultAvatar;
-    if (typeof rawAvatarUrl === 'string') {
-        if (rawAvatarUrl.startsWith('https://')) {
-            avatarUrl = rawAvatarUrl;
-        } else if (rawAvatarUrl.startsWith('http://')) {
-            avatarUrl = rawAvatarUrl.replace('http://', 'https://');
-        }
-    }
 
     return {
         type: 'bubble',
@@ -86,23 +75,6 @@ function createEmployeeBubble(employee, frontendUrl) {
             type: 'box',
             layout: 'vertical',
             contents: [
-                // Avatar Frame
-                {
-                    type: 'box',
-                    layout: 'vertical',
-                    alignItems: 'center',
-                    contents: [
-                        {
-                            type: 'image',
-                            url: avatarUrl,
-                            size: 'md',
-                            aspectRatio: '1:1',
-                            aspectMode: 'cover'
-                        }
-                    ],
-                    margin: 'md',
-                    paddingBottom: 'md'
-                },
                 // Employee Identity
                 {
                     type: 'text',
