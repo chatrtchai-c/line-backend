@@ -263,7 +263,7 @@ function createEmployeeBubble(employee, frontendUrl) {
  * @returns {object} LINE Flex Message envelope payload
  */
 function createEmployeeFlexMessage(data) {
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const employees = Array.isArray(data) ? data : [data];
     
     if (employees.length === 0) {
