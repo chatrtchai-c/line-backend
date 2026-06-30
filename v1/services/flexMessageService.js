@@ -312,7 +312,7 @@ function createEmployeeFlexMessage(data) {
         altText: `ผลการค้นหาพนักงาน (${employees.length} คน)`,
         contents: {
             type: 'carousel',
-            bubbles: bubbles
+            contents: bubbles
         }
     };
 }
