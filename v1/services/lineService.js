@@ -51,116 +51,166 @@ async function handleEvent(event) {
 
     // Handle text messages
     if (event.type === 'message' && event.message.type === 'text') {
-        const userMessage = event.message.text;
-        let replyText;
+        return await handleTextMessage(event, userId);
+    }
 
-        // When user click 'ค้นหาข้อมูลพนักงาน' button
-        if (userMessage === 'ค้นหาข้อมูลพนักงาน') {
-            userSearchState[userId] = 'WAITING_FOR_KEYWORD';
-            replyText = 'กรุณาระบุ รหัสพนักงาน หรือ ชื่อ-นามสกุล ที่ต้องการค้นหา';
+    // Ignore other event types
+    return null;
+}
 
-            console.log(`[LINE Webhook] Echoing message to replyToken: ${event.replyToken}`);
+/**
+ * Handles text messages from users.
+ * @param {object} event - Webhook event object
+ * @param {string} userId - LINE User ID
+ */
+async function handleTextMessage(event, userId) {
+    const userMessage = event.message.text;
+
+    // When user clicks 'ค้นหาข้อมูลพนักงาน' button
+    if (userMessage === 'ค้นหาข้อมูลพนักงาน') {
+        return await initiateEmployeeSearch(event, userId);
+    }
+
+    console.log(userSearchState);
+
+    if (userId && userSearchState[userId] === 'WAITING_FOR_KEYWORD') {
+        return await processEmployeeSearch(event, userId, userMessage);
+    }
+}
+
+/**
+ * Initiates the employee search flow.
+ * @param {object} event - Webhook event object
+ * @param {string} userId - LINE User ID
+ */
+async function initiateEmployeeSearch(event, userId) {
+    userSearchState[userId] = 'WAITING_FOR_KEYWORD';
+    const replyText = 'กรุณาระบุ รหัสพนักงาน หรือ ชื่อ-นามสกุล ที่ต้องการค้นหา';
+
+    console.log(`[LINE Webhook] Echoing message to replyToken: ${event.replyToken}`);
+    return await client.replyMessage({
+        replyToken: event.replyToken,
+        messages: [
+            {
+                type: 'text',
+                text: replyText
+            }
+        ]
+    });
+}
+
+/**
+ * Parses search parameters from the user's message.
+ * @param {string} message - Cleaned user message
+ * @returns {object|null} Search parameters or null if invalid
+ */
+function parseSearchParams(message) {
+    let employeeId = "";
+    let fullName = "";
+
+    if (/^\d+$/.test(message)) {
+        employeeId = message;
+    } else if (/^[ก-๙\s]+$/.test(message)) {
+        fullName = message.replace(/\s+/g, ' ');
+    }
+
+    if (!employeeId && !fullName) {
+        return null;
+    }
+
+    return { employeeId, fullName };
+}
+
+/**
+ * Fetches employee data from the external API.
+ * @param {object} searchParams - Search parameters (employeeId or fullName)
+ * @returns {Promise<Array>} List of employees found
+ */
+async function fetchEmployees({ employeeId, fullName }) {
+    const queryParams = new URLSearchParams();
+    if (employeeId) queryParams.append('employeeId', employeeId);
+    if (fullName) queryParams.append('fullName', fullName);
+
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/${process.env.API_VERSION}/employees?${queryParams.toString()}`;
+    const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+
+    const response = await fetch(apiUrl, {
+        headers: {
+            'Content-Type': 'application/json',
+            ...(apiKey ? { 'X-API-Key': apiKey } : {})
+        }
+    });
+    const data = await response.json();
+
+    let employees = [];
+    if (data) {
+        employees = data.items.content;
+        console.log('Parsed from data.items.content:', employees);
+    }
+    return employees;
+}
+
+/**
+ * Validates search keyword, queries the employee API, and replies with results.
+ * @param {object} event - Webhook event object
+ * @param {string} userId - LINE User ID
+ * @param {string} userMessage - Search message content
+ */
+async function processEmployeeSearch(event, userId, userMessage) {
+    console.log("user message: ", userMessage);
+
+    try {
+        const cleanMsg = userMessage.trim();
+        const searchParams = parseSearchParams(cleanMsg);
+
+        if (!searchParams) {
             return await client.replyMessage({
                 replyToken: event.replyToken,
                 messages: [
                     {
                         type: 'text',
-                        text: replyText
+                        text: 'กรุณาระบุรหัสพนักงานเป็น "ตัวเลข" หรือ ชื่อ-นามสกุลเป็น "ภาษาไทย" เท่านั้น'
                     }
                 ]
             });
         }
 
-        console.log(userSearchState);
-        
-        if (userId && userSearchState[userId] === 'WAITING_FOR_KEYWORD') {
+        delete userSearchState[userId];
 
-            console.log("user message: ", userMessage);
+        const employees = await fetchEmployees(searchParams);
 
-            try {
-                // Validate if numeric or Thai text
-                let employeeId = "";
-                let fullName = "";
-
-                const cleanMsg = userMessage.trim();
-                if (/^\d+$/.test(cleanMsg)) {
-                    employeeId = cleanMsg;
-                } else if (/^[ก-๙\s]+$/.test(cleanMsg)) {
-                    fullName = cleanMsg.replace(/\s+/g, ' ');
-                }
-                
-                if (!employeeId && !fullName) {
-                    return await client.replyMessage({
-                        replyToken: event.replyToken,
-                        messages: [
-                            {
-                                type: 'text',
-                                text: 'กรุณาระบุรหัสพนักงานเป็น "ตัวเลข" หรือ ชื่อ-นามสกุลเป็น "ภาษาไทย" เท่านั้น'
-                            }
-                        ]
-                    });
-                }
-
-                delete userSearchState[userId];
-
-                const queryParams = new URLSearchParams();
-                if (employeeId) queryParams.append('employeeId', employeeId);
-                if (fullName) queryParams.append('fullName', fullName);
-
-                const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/${process.env.API_VERSION}/employees?${queryParams.toString()}`;
-                const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-
-                const response = await fetch(apiUrl, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(apiKey ? { 'X-API-Key': apiKey } : {})
+        if (employees.length === 0) {
+            return await client.replyMessage({
+                replyToken: event.replyToken,
+                messages: [
+                    {
+                        type: 'text',
+                        text: `ไม่พบข้อมูลของ "${userMessage}" ครับ กรุณาลองตรวจสอบใหม่อีกครั้ง`
                     }
-                });
-                const data = await response.json();
-
-                let employees = [];
-                if (data) {
-                    employees = data.items.content;
-                    console.log('Parsed from data.items.content:', employees);
-                }
-
-                if (employees.length === 0) {
-                    return await client.replyMessage({
-                        replyToken: event.replyToken,
-                        messages: [
-                            {
-                                type: 'text',
-                                text: `ไม่พบข้อมูลของ "${userMessage}" ครับ กรุณาลองตรวจสอบใหม่อีกครั้ง`
-                            }
-                        ]
-                    });
-                }
-
-                // Create Flex Message (Single or Carousel)
-                const flexMessage = createEmployeeFlexMessage(employees, userMessage);
-                
-                return await client.replyMessage({
-                    replyToken: event.replyToken,
-                    messages: [flexMessage]
-                });
-
-            } catch (error) {
-                console.error("Error searching employee:", error);
-                    return await client.replyMessage({
-                        replyToken: event.replyToken,
-                        messages: [
-                            {
-                                type: 'text',
-                                text: 'เกิดข้อผิดพลาดในระบบค้นหา กรุณาลองใหม่อีกครั้ง'
-                            }
-                        ]
-                    });
-            }
+                ]
+            });
         }
-    }
 
-    // Ignore other event types
-    return null;
+        // Create Flex Message (Single or Carousel)
+        const flexMessage = createEmployeeFlexMessage(employees, userMessage);
+
+        return await client.replyMessage({
+            replyToken: event.replyToken,
+            messages: [flexMessage]
+        });
+
+    } catch (error) {
+        console.error("Error searching employee:", error);
+        return await client.replyMessage({
+            replyToken: event.replyToken,
+            messages: [
+                {
+                    type: 'text',
+                    text: 'เกิดข้อผิดพลาดในระบบค้นหา กรุณาลองใหม่อีกครั้ง'
+                }
+            ]
+        });
+    }
 }
 
 module.exports = {
