@@ -79,14 +79,16 @@ async function handleEvent(event) {
             console.log("user message: ", userMessage);
 
             try {
-                // Regular Expression:
-                const idMatch = userMessage.match(/\d+/);
-                const employeeId = idMatch ? idMatch[0] : "";
+                // Validate if numeric or Thai text
+                let employeeId = "";
+                let fullName = "";
 
-                const nameMatch = userMessage.match(/[ก-๙\s]+/);
-                let fullName = nameMatch ? nameMatch[0].trim() : "";
-
-                fullName = fullName.replace(/\s+/g, ' ');
+                const cleanMsg = userMessage.trim();
+                if (/^\d+$/.test(cleanMsg)) {
+                    employeeId = cleanMsg;
+                } else if (/^[ก-๙\s]+$/.test(cleanMsg)) {
+                    fullName = cleanMsg.replace(/\s+/g, ' ');
+                }
                 
                 if (!employeeId && !fullName) {
                     return await client.replyMessage({

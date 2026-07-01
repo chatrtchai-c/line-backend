@@ -34,11 +34,11 @@ function createEmployeeBubble(employee, frontendUrl) {
     const employeeId = employee.employeeId || '-';
     const position = employee.position || '-';
     const department = (employee.bu1 && employee.bu1.toLowerCase() !== 'none') ? employee.bu1 : '-';
-    const division = (employee.bu4 && employee.bu4.toLowerCase() !== 'none') 
-        ? employee.bu4 
+    const division = (employee.bu4 && employee.bu4.toLowerCase() !== 'none')
+        ? employee.bu4
         : ((employee.bu2 && employee.bu2.toLowerCase() !== 'none') ? employee.bu2 : '-');
     const workplace = employee.workPlace || '-';
-    
+
     // Map employee type
     let typeTh = '-';
     if (employee.employeeType === 'Permanent') {
@@ -265,19 +265,19 @@ function createEmployeeFlexMessage(data, query = '') {
     const frontendUrl = process.env.NEXTAUTH_URL;
     // For data as a arrays
     const employees = Array.isArray(data) ? data : [data];
-    
+
     if (employees.length === 0) {
         return {
             type: 'text',
             text: 'ไม่พบข้อมูลพนักงาน'
         };
     }
-    
+
     if (employees.length === 1) {
         const bubble = createEmployeeBubble(employees[0], frontendUrl);
         return {
             type: 'flex',
-            altText: `ข้อมูลพนักงาน: ${employees[0].fullName || employees[0].name_th || ''}`,
+            altText: `ข้อมูลพนักงาน: ${employees[0].fullName || ''}`,
             contents: bubble
         };
     }
@@ -339,7 +339,16 @@ function createEmployeeFlexMessage(data, query = '') {
                             action: {
                                 type: 'uri',
                                 label: 'ดูผลการค้นหาทั้งหมด',
-                                uri: `${frontendUrl}/search-result?query=${encodeURIComponent(query)}`
+                                uri: (() => {
+                                    const cleanQuery = query.trim();
+                                    if (/^\d+$/.test(cleanQuery)) {
+                                        return `${frontendUrl}/search-result?employeeId=${encodeURIComponent(cleanQuery)}`;
+                                    } else if (/^[ก-๙\s]+$/.test(cleanQuery)) {
+                                        return `${frontendUrl}/search-result?fullName=${encodeURIComponent(cleanQuery)}`;
+                                    } else {
+                                        return `${frontendUrl}/search-result?query=${encodeURIComponent(cleanQuery)}`;
+                                    }
+                                })()
                             },
                             color: '#ff5100',
                             style: 'primary'
