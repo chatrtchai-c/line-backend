@@ -74,7 +74,6 @@ async function handleEvent(event) {
         console.log(userSearchState);
         
         if (userId && userSearchState[userId] === 'WAITING_FOR_KEYWORD') {
-            delete userSearchState[userId];
 
             console.log("user message: ", userMessage);
 
@@ -101,6 +100,8 @@ async function handleEvent(event) {
                         ]
                     });
                 }
+
+                delete userSearchState[userId];
 
                 const queryParams = new URLSearchParams();
                 if (employeeId) queryParams.append('employeeId', employeeId);
