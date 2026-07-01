@@ -30,9 +30,8 @@ function formatThaiDate(dateStr) {
  * @returns {object} LINE Flex Bubble object
  */
 function createEmployeeBubble(employee, frontendUrl) {
-    // Map employee fields with fallback values
-    const name = employee.fullName || employee.name_th || '-';
-    const employeeId = employee.employeeId || employee.code || '-';
+    const name = employee.fullName || '-';
+    const employeeId = employee.employeeId || '-';
     const position = employee.position || '-';
     const department = (employee.bu1 && employee.bu1.toLowerCase() !== 'none') ? employee.bu1 : '-';
     const division = (employee.bu4 && employee.bu4.toLowerCase() !== 'none') 
@@ -262,8 +261,9 @@ function createEmployeeBubble(employee, frontendUrl) {
  * @param {Array|object} data - One or multiple employee records
  * @returns {object} LINE Flex Message envelope payload
  */
-function createEmployeeFlexMessage(data) {
-    const frontendUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+function createEmployeeFlexMessage(data, query = '') {
+    const frontendUrl = process.env.NEXTAUTH_URL;
+    // For data as a arrays
     const employees = Array.isArray(data) ? data : [data];
     
     if (employees.length === 0) {
@@ -272,13 +272,82 @@ function createEmployeeFlexMessage(data) {
             text: 'ไม่พบข้อมูลพนักงาน'
         };
     }
-
+    
     if (employees.length === 1) {
         const bubble = createEmployeeBubble(employees[0], frontendUrl);
         return {
             type: 'flex',
             altText: `ข้อมูลพนักงาน: ${employees[0].fullName || employees[0].name_th || ''}`,
             contents: bubble
+        };
+    }
+
+    if (employees.length > 10) {
+        return {
+            type: 'flex',
+            altText: `ผลการค้นหาพนักงาน (${employees.length} คน)`,
+            contents: {
+                type: 'bubble',
+                size: 'mega',
+                header: {
+                    type: 'box',
+                    layout: 'vertical',
+                    contents: [
+                        {
+                            type: 'text',
+                            text: 'ผลการค้นหาพนักงาน / Search Results',
+                            weight: 'bold',
+                            color: '#FFFFFF',
+                            size: 'sm',
+                            align: 'center'
+                        }
+                    ],
+                    backgroundColor: '#ff5100',
+                    paddingAll: 'md'
+                },
+                body: {
+                    type: 'box',
+                    layout: 'vertical',
+                    contents: [
+                        {
+                            type: 'text',
+                            text: `พบข้อมูลพนักงานทั้งหมด ${employees.length} คน`,
+                            weight: 'bold',
+                            size: 'lg',
+                            align: 'center',
+                            color: '#0F172A',
+                            wrap: true
+                        },
+                        {
+                            type: 'text',
+                            text: 'เนื่องจากผลการค้นหามีจำนวนมาก กรุณาคลิกปุ่มด้านล่างเพื่อดูผลการค้นหาทั้งหมดบนเว็บไซต์',
+                            size: 'sm',
+                            color: '#64748B',
+                            align: 'center',
+                            margin: 'md',
+                            wrap: true
+                        }
+                    ],
+                    paddingAll: 'lg'
+                },
+                footer: {
+                    type: 'box',
+                    layout: 'vertical',
+                    contents: [
+                        {
+                            type: 'button',
+                            action: {
+                                type: 'uri',
+                                label: 'ดูผลการค้นหาทั้งหมด',
+                                uri: `${frontendUrl}/search-result?query=${encodeURIComponent(query)}`
+                            },
+                            color: '#ff5100',
+                            style: 'primary'
+                        }
+                    ],
+                    paddingAll: 'md'
+                }
+            }
         };
     }
 

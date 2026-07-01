@@ -115,10 +115,9 @@ async function handleEvent(event) {
                 });
                 const data = await response.json();
 
-                // Robust parsing of employee array
                 let employees = [];
                 if (data) {
-                        employees = data.items.content;
+                    employees = data.items.content;
                     console.log('Parsed from data.items.content:', employees);
                 }
 
@@ -135,7 +134,7 @@ async function handleEvent(event) {
                 }
 
                 // Create Flex Message (Single or Carousel)
-                const flexMessage = createEmployeeFlexMessage(employees);
+                const flexMessage = createEmployeeFlexMessage(employees, userMessage);
                 
                 return await client.replyMessage({
                     replyToken: event.replyToken,
