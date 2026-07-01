@@ -213,9 +213,35 @@ async function processEmployeeSearch(event, userId, userMessage) {
     }
 }
 
+/**
+ * Sends a welcome message to a LINE user.
+ * @param {string} userId - LINE User ID
+ * @param {string} displayName - LINE Display Name
+ */
+async function sendWelcomeMessage(userId, displayName) {
+    if (!userId) {
+        throw new Error("Missing LINE User ID (userId)");
+    }
+
+    const greetingMessage = displayName
+        ? `ยินดีต้อนรับคุณ ${displayName} เข้าสู่ระบบ ThaiPBS LINE Family สำเร็จแล้วค่ะ/ครับ! 🎉`
+        : `ยินดีต้อนรับเข้าสู่ระบบ ThaiPBS LINE Family สำเร็จแล้วค่ะ/ครับ! 🎉`;
+
+    return await client.pushMessage({
+        to: userId,
+        messages: [
+            {
+                type: 'text',
+                text: greetingMessage
+            }
+        ]
+    });
+}
+
 module.exports = {
     client,
     sendBirthdayMessage,
+    sendWelcomeMessage,
     handleEvent
 };
 
