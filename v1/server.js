@@ -52,7 +52,7 @@ app.post('/api/send-birthday-message', async (req, res) => {
     }
 });
 
-app.post('/api/send-message', async (req, res) => {
+app.post('/api/send-welcome-message', async (req, res) => {
     try {
         const { userId, displayName } = req.body;
 

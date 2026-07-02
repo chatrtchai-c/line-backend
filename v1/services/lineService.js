@@ -224,8 +224,8 @@ async function sendWelcomeMessage(userId, displayName) {
     }
 
     const greetingMessage = displayName
-        ? `ยินดีต้อนรับคุณ ${displayName} เข้าสู่ระบบ ThaiPBS LINE Family สำเร็จแล้วค่ะ/ครับ! 🎉`
-        : `ยินดีต้อนรับเข้าสู่ระบบ ThaiPBS LINE Family สำเร็จแล้วค่ะ/ครับ! 🎉`;
+        ? `ยินดีต้อนรับ, คุณ ${displayName} สู่ ThaiPBS LINE Family 🎉`
+        : `ยินดีต้อนรับเข้าสู่ระบบ ThaiPBS LINE Family 🎉`;
 
     return await client.pushMessage({
         to: userId,
