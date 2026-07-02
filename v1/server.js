@@ -33,9 +33,10 @@ app.post('/webhook', middleware({ channelSecret: process.env.LINE_CHANNEL_SECRET
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
+const API_VERSION = process.env.API_VERSION;
 
 // Define Route
-app.post('/api/send-birthday-message', async (req, res) => {
+app.post(`${API_VERSION}/send-birthday-message`, async (req, res) => {
     try {
         const { userId, name, message } = req.body;
 
@@ -52,7 +53,7 @@ app.post('/api/send-birthday-message', async (req, res) => {
     }
 });
 
-app.post('/api/send-welcome-message', async (req, res) => {
+app.post(`${API_VERSION}/send-welcome-message`, async (req, res) => {
     try {
         const { userId, displayName } = req.body;
 
