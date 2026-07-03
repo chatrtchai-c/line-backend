@@ -36,7 +36,7 @@ const PORT = process.env.PORT || 3000;
 const API_VERSION = process.env.API_VERSION;
 
 // Define Route
-app.post(`${API_VERSION}/send-birthday-message`, async (req, res) => {
+app.post(`api/${API_VERSION}/send-birthday-message`, async (req, res) => {
     try {
         const { userId, name, message } = req.body;
 
@@ -53,7 +53,7 @@ app.post(`${API_VERSION}/send-birthday-message`, async (req, res) => {
     }
 });
 
-app.post(`${API_VERSION}/send-welcome-message`, async (req, res) => {
+app.post(`api/${API_VERSION}/send-welcome-message`, async (req, res) => {
     try {
         const { userId, displayName } = req.body;
 
