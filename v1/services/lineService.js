@@ -223,6 +223,9 @@ async function sendWelcomeMessage(userId, displayName) {
         throw new Error("Missing LINE User ID (userId)");
     }
 
+    // console.log("User ID:", userId);
+    // console.log("Display Name:", displayName);
+
     const greetingMessage = displayName
         ? `ยินดีต้อนรับ, คุณ ${displayName} สู่ ThaiPBS LINE Family 🎉`
         : `ยินดีต้อนรับเข้าสู่ระบบ ThaiPBS LINE Family 🎉`;
