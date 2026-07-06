@@ -55,16 +55,15 @@ app.post(`/api/${API_VERSION}/send-birthday-message`, async (req, res) => {
 
 app.post(`/api/${API_VERSION}/send-welcome-message`, async (req, res) => {
     try {
-        const { lineUuid, employeeId } = req.body;
+        const { lineUuid } = req.body;
 
         if (!lineUuid) {
             return res.status(400).json({ error: "กรุณาระบุ LINE User ID (userId)" });
         }
 
         console.log("lineUuid: ", lineUuid);
-        console.log("employeeId: ", employeeId);
 
-        await sendWelcomeMessage(lineUuid, employeeId);
+        await sendWelcomeMessage(lineUuid);
 
         return res.json({ success: true, message: `ส่งข้อความต้อนรับสำเร็จไปยัง User ID: ${lineUuid}` });
     } catch (error) {
