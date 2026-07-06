@@ -61,6 +61,9 @@ app.post(`/api/${API_VERSION}/send-welcome-message`, async (req, res) => {
             return res.status(400).json({ error: "กรุณาระบุ LINE User ID (userId)" });
         }
 
+        console.log("UserID: ", userId);
+        console.log("displayName: ", displayName);
+
         await sendWelcomeMessage(userId, displayName);
 
         return res.json({ success: true, message: `ส่งข้อความต้อนรับสำเร็จไปยัง User ID: ${userId}` });
