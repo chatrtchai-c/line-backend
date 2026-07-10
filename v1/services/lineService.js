@@ -256,37 +256,33 @@ async function handleWelfareRequest(event, userId) {
             });
         }
 
-        // 2. Fetch welfare rights
-        // const currentYear = new Date().getFullYear();
-        // const welfareYear = currentYear; // Assuming Buddhist Era is used by API
-        const welfareYear = "2024";
+        // 2. Fetch welfare rights for 2024, 2025, 2026
+        const years = [2024, 2025, 2026];
         
-        console.log(`${employeeId}: ${welfareYear}`);
-        // console.log({
-        //     apiUrl,
-        //     apiVersion,
-        //     apiKey
-        // })
-        const welfareResponse = await fetch(`${apiUrl}/api/${apiVersion}/welfare/welfareright?id=${employeeId}&year=${welfareYear}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                ...(apiKey ? { 'X-API-Key': apiKey } : {})
+        const welfarePromises = years.map(async (year) => {
+            console.log({
+                employeeId,
+                year
+            })
+            const response = await fetch(`${apiUrl}/api/${apiVersion}/welfare/welfareright?id=${employeeId}&year=${year}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(apiKey ? { 'X-API-Key': apiKey } : {})
+                }
+            });
+            
+            let data = {};
+            if (response.ok) {
+                const result = await response.json();
+                data = result.data || result;
             }
+            return { year, data };
         });
 
-        console.log(welfareResponse);
-
-        let welfareData = {};
-        if (welfareResponse.ok) {
-            const result = await welfareResponse.json();
-            console.log(result);
-            welfareData = result.data || result;
-        }
-
-        console.log(welfareData);
+        const welfareDataList = await Promise.all(welfarePromises);
 
         // 3. Send Flex Message
-        const flexMessage = createWelfareFlexMessage(welfareData, frontendUrl);
+        const flexMessage = createWelfareFlexMessage(welfareDataList, frontendUrl);
         
         return await client.replyMessage({
             replyToken: event.replyToken,
