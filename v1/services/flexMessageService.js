@@ -374,6 +374,114 @@ function createEmployeeFlexMessage(data, query = '') {
     };
 }
 
+/**
+ * Creates a welfare Flex Message payload.
+ * @param {object} welfareData - Welfare data (staff and family)
+ * @param {string} frontendUrl - Frontend application URL
+ * @returns {object} LINE Flex Message object
+ */
+function createWelfareFlexMessage(welfareData, frontendUrl) {
+    const contents = [];
+
+    const formatCurrency = (val) => {
+        const num = parseFloat(val) || 0;
+        return num.toLocaleString('th-TH');
+    };
+
+    const addSection = (title, items, color) => {
+        if (!items || items.length === 0) return;
+
+        contents.push({
+            type: 'text',
+            text: title,
+            weight: 'bold',
+            color: color,
+            size: 'sm',
+            margin: 'md'
+        });
+
+        items.forEach(item => {
+            const limit = parseFloat(item.limit) || 0;
+            const use = parseFloat(item.use) || 0;
+            const remain = parseFloat(item.remain) || 0;
+
+            contents.push({
+                type: 'box',
+                layout: 'vertical',
+                margin: 'sm',
+                contents: [
+                    {
+                        type: 'box',
+                        layout: 'horizontal',
+                        contents: [
+                            { type: 'text', text: item.type, size: 'xs', color: '#333333', weight: 'bold', flex: 1 },
+                            { type: 'text', text: `฿${formatCurrency(use)} / ฿${formatCurrency(limit)}`, size: 'xs', color: '#666666', align: 'end' }
+                        ]
+                    },
+                    {
+                        type: 'text',
+                        text: `คงเหลือ: ฿${formatCurrency(remain)}`,
+                        size: 'xxs',
+                        color: '#999999',
+                        align: 'end',
+                        margin: 'xs'
+                    }
+                ]
+            });
+            contents.push({
+                type: 'separator',
+                margin: 'sm'
+            });
+        });
+    };
+
+    addSection('สวัสดิการของฉัน', welfareData.staff, '#10b981');
+    addSection('สวัสดิการครอบครัว', welfareData.family, '#3b82f6');
+
+    if (contents.length === 0) {
+        contents.push({
+            type: 'text',
+            text: 'ไม่พบข้อมูลสวัสดิการในปีนี้',
+            color: '#999999',
+            size: 'sm',
+            align: 'center',
+            margin: 'md'
+        });
+    }
+
+    return {
+        type: 'flex',
+        altText: 'ข้อมูลสวัสดิการของคุณ',
+        contents: {
+            type: 'bubble',
+            size: 'mega',
+            header: {
+                type: 'box',
+                layout: 'vertical',
+                backgroundColor: '#f59e0b',
+                paddingAll: 'md',
+                contents: [
+                    {
+                        type: 'text',
+                        text: 'ข้อมูลสวัสดิการพนักงาน',
+                        weight: 'bold',
+                        color: '#ffffff',
+                        size: 'md',
+                        align: 'center'
+                    }
+                ]
+            },
+            body: {
+                type: 'box',
+                layout: 'vertical',
+                paddingAll: 'lg',
+                contents: contents
+            }
+        }
+    };
+}
+
 module.exports = {
-    createEmployeeFlexMessage
+    createEmployeeFlexMessage,
+    createWelfareFlexMessage
 };

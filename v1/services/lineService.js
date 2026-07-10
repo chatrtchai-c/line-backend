@@ -1,5 +1,5 @@
 const line = require('@line/bot-sdk');
-const { createEmployeeFlexMessage } = require('./flexMessageService');
+const { createEmployeeFlexMessage, createWelfareFlexMessage } = require('./flexMessageService');
 
 // LINE Config
 const lineConfig = {
@@ -65,16 +65,21 @@ async function handleEvent(event) {
  */
 async function handleTextMessage(event, userId) {
     const userMessage = event.message.text;
+    const cleanMsg = userMessage.trim();
 
     // When user clicks 'ค้นหาข้อมูลพนักงาน' button
-    if (userMessage === 'ค้นหาข้อมูลพนักงาน') {
+    if (cleanMsg === 'ค้นหาข้อมูลพนักงาน') {
         return await initiateEmployeeSearch(event, userId);
+    }
+
+    if (cleanMsg === 'สวัสดิการ' || cleanMsg.toLowerCase() === 'welfare') {
+        return await handleWelfareRequest(event, userId);
     }
 
     console.log(userSearchState);
 
     if (userId && userSearchState[userId] === 'WAITING_FOR_KEYWORD') {
-        return await processEmployeeSearch(event, userId, userMessage);
+        return await processEmployeeSearch(event, userId, cleanMsg);
     }
 }
 
@@ -200,7 +205,6 @@ async function processEmployeeSearch(event, userId, userMessage) {
         });
 
     } catch (error) {
-        console.error("Error searching employee:", error);
         return await client.replyMessage({
             replyToken: event.replyToken,
             messages: [
@@ -209,6 +213,78 @@ async function processEmployeeSearch(event, userId, userMessage) {
                     text: 'เกิดข้อผิดพลาดในระบบค้นหา กรุณาลองใหม่อีกครั้ง'
                 }
             ]
+        });
+    }
+}
+
+/**
+ * Handles welfare check request.
+ * @param {object} event - Webhook event object
+ * @param {string} userId - LINE User ID
+ */
+async function handleWelfareRequest(event, userId) {
+    console.log(`[LINE Webhook] User ${userId} requested welfare`);
+    try {
+        const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+        const apiVersion = process.env.API_VERSION;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || '';
+
+        // 1. Fetch user profile by LINE UUID
+        const profileResponse = await fetch(`${apiUrl}/api/${apiVersion}/my-profile?lineUuid=${userId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                ...(apiKey ? { 'X-API-Key': apiKey } : {})
+            }
+        });
+
+        if (!profileResponse.ok) {
+            return await client.replyMessage({
+                replyToken: event.replyToken,
+                messages: [{ type: 'text', text: 'ไม่พบข้อมูลบัญชีของคุณในระบบ กรุณาเข้าสู่ระบบผ่านแอปพลิเคชันเพื่อผูกบัญชี LINE ก่อนใช้งาน' }]
+            });
+        }
+
+        const profileData = await profileResponse.json();
+        const employeeId = profileData.data?.employeeId;
+
+        if (!employeeId) {
+             return await client.replyMessage({
+                replyToken: event.replyToken,
+                messages: [{ type: 'text', text: 'ไม่พบรหัสพนักงานของคุณในระบบ' }]
+            });
+        }
+
+        // 2. Fetch welfare rights
+        const currentYear = new Date().getFullYear();
+        const welfareYear = currentYear + 543; // Assuming Buddhist Era is used by API
+        
+        const welfareResponse = await fetch(`${apiUrl}/api/${apiVersion}/welfare/welfareright?employeeId=${employeeId}&year=${welfareYear}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                ...(apiKey ? { 'X-API-Key': apiKey } : {})
+            }
+        });
+
+        let welfareData = {};
+        if (welfareResponse.ok) {
+            const result = await welfareResponse.json();
+            welfareData = result.data || result;
+        }
+
+        // 3. Send Flex Message
+        const flexMessage = createWelfareFlexMessage(welfareData, frontendUrl);
+        
+        return await client.replyMessage({
+            replyToken: event.replyToken,
+            messages: [flexMessage]
+        });
+
+    } catch (error) {
+        console.error("Error fetching welfare:", error);
+        return await client.replyMessage({
+            replyToken: event.replyToken,
+            messages: [{ type: 'text', text: 'เกิดข้อผิดพลาดในการดึงข้อมูลสวัสดิการ กรุณาลองใหม่อีกครั้ง' }]
         });
     }
 }
