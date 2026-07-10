@@ -245,7 +245,7 @@ function createEmployeeBubble(employee, frontendUrl) {
                     action: {
                         type: 'uri',
                         label: 'ดูโปรไฟล์บนระบบ',
-                        uri: `${frontendUrl}/profile/${employeeId}`
+                        uri: `${frontendUrl}/profile?id=${employeeId}`
                     },
                     color: '#ff5100',
                     style: 'primary'
