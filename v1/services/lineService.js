@@ -231,19 +231,19 @@ async function handleWelfareRequest(event, userId) {
         const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || '';
 
         // 1. Fetch user profile by LINE UUID
-        const profileResponse = await fetch(`${apiUrl}/api/${apiVersion}/my-profile?lineUuid=${userId}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                ...(apiKey ? { 'X-API-Key': apiKey } : {})
-            }
-        });
+        // const profileResponse = await fetch(`${apiUrl}/api/${apiVersion}/my-profile?lineUuid=${userId}`, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         ...(apiKey ? { 'X-API-Key': apiKey } : {})
+        //     }
+        // });
 
-        if (!profileResponse.ok) {
-            return await client.replyMessage({
-                replyToken: event.replyToken,
-                messages: [{ type: 'text', text: 'ไม่พบข้อมูลบัญชีของคุณในระบบ กรุณาเข้าสู่ระบบผ่านแอปพลิเคชันเพื่อผูกบัญชี LINE ก่อนใช้งาน' }]
-            });
-        }
+        // if (!profileResponse.ok) {
+        //     return await client.replyMessage({
+        //         replyToken: event.replyToken,
+        //         messages: [{ type: 'text', text: 'ไม่พบข้อมูลบัญชีของคุณในระบบ กรุณาเข้าสู่ระบบผ่านแอปพลิเคชันเพื่อผูกบัญชี LINE ก่อนใช้งาน' }]
+        //     });
+        // }
 
         const profileData = await profileResponse.json();
         // const employeeId = profileData.data?.employeeId;
