@@ -275,6 +275,8 @@ async function handleWelfareRequest(event, userId) {
             welfareData = result.data || result;
         }
 
+        console.log(welfareData);
+
         // 3. Send Flex Message
         const flexMessage = createWelfareFlexMessage(welfareData, frontendUrl);
         
