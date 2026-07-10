@@ -272,6 +272,7 @@ async function handleWelfareRequest(event, userId) {
         let welfareData = {};
         if (welfareResponse.ok) {
             const result = await welfareResponse.json();
+            console.log(result);
             welfareData = result.data || result;
         }
 
