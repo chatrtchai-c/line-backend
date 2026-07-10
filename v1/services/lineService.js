@@ -262,6 +262,11 @@ async function handleWelfareRequest(event, userId) {
         const welfareYear = "2024";
         
         console.log(`${employeeId}: ${welfareYear}`);
+        console.log({
+            apiUrl,
+            apiVersion,
+            apiKey
+        })
         const welfareResponse = await fetch(`${apiUrl}/api/${apiVersion}/welfare/welfareright?employeeId=${employeeId}&year=${welfareYear}`, {
             headers: {
                 'Content-Type': 'application/json',
