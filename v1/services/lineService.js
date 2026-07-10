@@ -246,7 +246,8 @@ async function handleWelfareRequest(event, userId) {
         }
 
         const profileData = await profileResponse.json();
-        const employeeId = profileData.data?.employeeId;
+        // const employeeId = profileData.data?.employeeId;
+        const employeeId = '01234';
 
         if (!employeeId) {
              return await client.replyMessage({
