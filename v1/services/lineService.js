@@ -257,8 +257,9 @@ async function handleWelfareRequest(event, userId) {
         }
 
         // 2. Fetch welfare rights
-        const currentYear = new Date().getFullYear();
-        const welfareYear = currentYear + 543; // Assuming Buddhist Era is used by API
+        // const currentYear = new Date().getFullYear();
+        // const welfareYear = currentYear; // Assuming Buddhist Era is used by API
+        const welfareYear = 2024;
         
         const welfareResponse = await fetch(`${apiUrl}/api/${apiVersion}/welfare/welfareright?employeeId=${employeeId}&year=${welfareYear}`, {
             headers: {
