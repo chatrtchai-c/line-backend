@@ -269,6 +269,8 @@ async function handleWelfareRequest(event, userId) {
             }
         });
 
+        console.log(welfareResponse);
+
         let welfareData = {};
         if (welfareResponse.ok) {
             const result = await welfareResponse.json();
