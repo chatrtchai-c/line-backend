@@ -7,16 +7,17 @@ const webhookRoutes = require('./v1/routes/webhook.route');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const version = process.env.API_VERSION || "v1";
 
 app.use(cors());
 
 // LINE Webhook MUST be registered before express.json()
-app.use('/api/v1/webhook', webhookRoutes);
+app.use(`/api/${version}/webhook`, webhookRoutes);
 
 app.use(express.json());
 
 // API Routes
-app.use('/api/v1', v1Routes);
+app.use(`/api/${version}`, v1Routes);
 
 app.get('/', (req, res) => {
   res.send('Line Backend is running');
