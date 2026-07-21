@@ -10,7 +10,7 @@ const getLeaveStatistic = async (lineUserId, pin) => {
     return { error: 'NOT_LOGGED_IN' };
   }
 
-  const { lineUuid, pin, id } = profileData;
+  const { lineUuid, id } = profileData;
   const year = 2026; // สามารถเปลี่ยนเป็น new Date().getFullYear() ได้
 
   // 2. ดึงข้อมูลสิทธิการลาจาก backend โดยใช้ apiClient
