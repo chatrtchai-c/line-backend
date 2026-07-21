@@ -9,7 +9,7 @@ const HttpMethod = {
   DELETE: 'DELETE'
 };
 
-const apiClient = async (endpoint, method = HttpMethod.GET, options = {}) => {
+const apiClient = async (endpoint, method, options = {}) => {
   const url = `${public_backend_url}${endpoint}`;
   
   const headers = {
