@@ -3,7 +3,10 @@ const { getUserProfileByLineId } = require('./user.service');
 
 const getLeaveStatistic = async (lineUserId, pin) => {
   // 1. ดึงข้อมูล Profile จาก User Service
+  console.log(`[getLeaveStatistic] ${lineUserId}: ${pin}`)
   const profileData = await getUserProfileByLineId(lineUserId, pin);
+
+  console.log("[getLeaveStatistic] ", JSON.stringify(profileData));
   
   // ตรวจสอบว่ามีข้อมูล profile หรือไม่ (เหมือนการเช็คว่า Login หรือยัง)
   if (!profileData || !profileData.lineUuid) {
