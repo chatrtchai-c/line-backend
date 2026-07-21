@@ -14,7 +14,7 @@ const apiClient = async (endpoint, method = HttpMethod.GET, options = {}) => {
   
   const headers = {
     'Content-Type': 'application/json',
-    'x-api-key': public_backend_api_key,
+    'X-Api-Key': public_backend_api_key,
     ...options.headers
   };
 
