@@ -1,9 +1,9 @@
 const { apiClient, HttpMethod } = require('../utils/apiClient');
 const { getUserProfileByLineId } = require('./user.service');
 
-const getLeaveStatistic = async (lineUserId) => {
+const getLeaveStatistic = async (lineUserId, pin) => {
   // 1. ดึงข้อมูล Profile จาก User Service
-  const profileData = await getUserProfileByLineId(lineUserId);
+  const profileData = await getUserProfileByLineId(lineUserId, pin);
   
   // ตรวจสอบว่ามีข้อมูล profile หรือไม่ (เหมือนการเช็คว่า Login หรือยัง)
   if (!profileData || !profileData.lineUuid) {
