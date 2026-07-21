@@ -13,11 +13,11 @@ const getLeaveStatistic = async (lineUserId, pin) => {
   //   return { error: 'NOT_LOGGED_IN' };
   // }
 
-  const { lineUuid, id } = profileData;
+  const { id } = profileData.data;
   const year = 2026; // สามารถเปลี่ยนเป็น new Date().getFullYear() ได้
 
   // 2. ดึงข้อมูลสิทธิการลาจาก backend โดยใช้ apiClient
-  const leaveStatData = await apiClient(`/api/v1/leave/leavestatistic?lineUuid=${lineUuid}&pin=${pin}&id=${id}&year=${year}`, HttpMethod.GET);
+  const leaveStatData = await apiClient(`/api/v1/leave/leavestatistic?lineUuid=${lineUserId}&pin=${pin}&id=${id}&year=${year}`, HttpMethod.GET);
 
   // 3. จัดเตรียมข้อมูลสำหรับ Flex Message
   return {
