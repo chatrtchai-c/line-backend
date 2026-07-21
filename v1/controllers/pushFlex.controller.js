@@ -18,8 +18,9 @@ const pushLeaveStatFlex = async (req, res) => {
     // 1. ดักจับ Error จากฟังก์ชัน getLeaveStatistic()
     let leaveStatistic;
     try {
+      console.log(`[pushLeaveStatFlex] ${lineUuid}: ${pin}`);
       leaveStatistic = await getLeaveStatistic(lineUuid, pin);
-      console.log(JSON.stringify(leaveStatistic, null, 2));
+      console.log("[pushLeaveStatFlex] ", JSON.stringify(leaveStatistic));
     } catch (fetchError) {
       console.error('[Error 1] Failed to fetch leave statistics:', fetchError);
       return res.status(500).json({ success: false, message: 'Failed to fetch leave statistics', error: fetchError.message });
