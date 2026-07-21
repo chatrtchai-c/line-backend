@@ -9,9 +9,9 @@ const getLeaveStatistic = async (lineUserId, pin) => {
   console.log("[getLeaveStatistic] ", JSON.stringify(profileData));
   
   // ตรวจสอบว่ามีข้อมูล profile หรือไม่ (เหมือนการเช็คว่า Login หรือยัง)
-  if (!profileData || !profileData.lineUuid) {
-    return { error: 'NOT_LOGGED_IN' };
-  }
+  // if (!profileData || !profileData.lineUuid) {
+  //   return { error: 'NOT_LOGGED_IN' };
+  // }
 
   const { lineUuid, id } = profileData;
   const year = 2026; // สามารถเปลี่ยนเป็น new Date().getFullYear() ได้
