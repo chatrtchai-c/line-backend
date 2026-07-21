@@ -23,7 +23,7 @@ const handleEvent = async (event) => {
   }
 
   if (event.message.text === 'ตรวจสอบสิทธิการลา') {
-    const liffUrl = process.env.LIFF_PIN_URL || "https://liff.line.me/YOUR_LIFF_ID/pin";
+    const liffUrl = `${process.env.LINE_LIFF_ID}/pin`;
     const flexMessage = generateRequirePinFlex(liffUrl);
     
     return client.replyMessage({
