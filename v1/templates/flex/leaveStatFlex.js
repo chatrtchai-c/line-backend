@@ -1,90 +1,52 @@
 const generateLeaveStatFlex = (leaveStatisticData) => {
   const { id, year, statistic } = leaveStatisticData;
 
-  // สร้าง block รายการสถิติการลาแต่ละประเภท
+  // สร้าง block รายการสถิติการลาแต่ละประเภทเป็นตาราง
   const statItems = statistic.map(stat => {
-    // คำนวณเปอร์เซ็นต์ของ progress bar (จำนวนที่ใช้ไปเทียบกับสิทธิ์ที่มี)
-    let percentage = 0;
-    if (stat.privileges > 0) {
-      percentage = Math.min(100, Math.max(0, (stat.used / stat.privileges) * 100));
-    } else if (stat.used > 0) {
-      percentage = 100; // กรณีไม่มีสิทธิ์ (0) แต่มีการใช้ จะให้ bar เต็ม
-    }
-
-    // กำหนดสีของ bar ถ้ายอดใช้เกินสิทธิ์ ให้เป็นสีแดง ถ้าปกติให้เป็นสีเขียว
+    // กำหนดสีถ้ายอดใช้เกินสิทธิ์ ให้เป็นสีแดง ถ้าปกติให้เป็นสีปกติ
     const isExceeded = (stat.used > stat.privileges && stat.privileges > 0) || (stat.privileges === 0 && stat.used > 0);
-    const barColor = isExceeded ? "#ff5252" : "#4CAF50";
+    const valueColor = isExceeded ? "#ff5252" : "#111111";
 
     return {
       type: "box",
-      layout: "vertical",
-      margin: "xl",
+      layout: "horizontal",
+      margin: "md",
       spacing: "sm",
       contents: [
         {
-          type: "box",
-          layout: "horizontal",
-          contents: [
-            {
-              type: "text",
-              text: stat.leaveType,
-              size: "sm",
-              color: "#333333",
-              flex: 1,
-              weight: "bold",
-              wrap: true
-            },
-            {
-              type: "text",
-              text: stat.privileges > 0 ? `เหลือ ${stat.remaining} / ${stat.privileges} วัน` : `${stat.used} วัน`,
-              size: "sm",
-              color: isExceeded ? "#ff5252" : "#111111",
-              align: "end",
-              weight: "bold"
-            }
-          ]
+          type: "text",
+          text: stat.leaveType,
+          size: "sm",
+          color: "#333333",
+          flex: 4,
+          wrap: true,
+          weight: "bold"
         },
         {
-          type: "box",
-          layout: "horizontal",
-          contents: [
-            {
-              type: "text",
-              text: "ใช้ไปแล้ว",
-              size: "xs",
-              color: "#aaaaaa"
-            },
-            {
-              type: "text",
-              text: `${stat.used} วัน`,
-              size: "xs",
-              color: "#aaaaaa",
-              align: "end"
-            }
-          ]
+          type: "text",
+          text: stat.privileges > 0 ? `${stat.privileges}` : "-",
+          size: "sm",
+          color: "#555555",
+          flex: 2,
+          align: "center"
         },
-        // Progress Bar
         {
-          type: "box",
-          layout: "horizontal",
-          margin: "sm",
-          height: "6px",
-          backgroundColor: "#F0F0F0",
-          cornerRadius: "md",
-          contents: [
-            {
-              type: "box",
-              layout: "vertical",
-              width: `${percentage}%`,
-              backgroundColor: barColor,
-              cornerRadius: "md",
-              contents: [
-                {
-                  type: "filler"
-                }
-              ]
-            }
-          ]
+          type: "text",
+          text: `${stat.used}`,
+          size: "sm",
+          color: valueColor,
+          flex: 2,
+          align: "center",
+          weight: "bold"
+        },
+        {
+          type: "text",
+          text: stat.privileges > 0 ? `${stat.remaining}` : "-",
+          size: "sm",
+          color: valueColor,
+          flex: 2,
+          align: "end",
+          weight: "bold"
         }
       ]
     };
@@ -152,6 +114,50 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
           {
             type: "separator",
             margin: "lg"
+          },
+          // Header ของตาราง
+          {
+            type: "box",
+            layout: "horizontal",
+            margin: "md",
+            spacing: "sm",
+            contents: [
+              {
+                type: "text",
+                text: "ประเภท",
+                color: "#aaaaaa",
+                size: "xs",
+                flex: 4
+              },
+              {
+                type: "text",
+                text: "สิทธิ์",
+                color: "#aaaaaa",
+                size: "xs",
+                flex: 2,
+                align: "center"
+              },
+              {
+                type: "text",
+                text: "ใช้ไป",
+                color: "#aaaaaa",
+                size: "xs",
+                flex: 2,
+                align: "center"
+              },
+              {
+                type: "text",
+                text: "คงเหลือ",
+                color: "#aaaaaa",
+                size: "xs",
+                flex: 2,
+                align: "end"
+              }
+            ]
+          },
+          {
+            type: "separator",
+            margin: "md"
           },
           // นำรายการสถิติการลาแต่ละประเภทมาแสดง
           ...statItems

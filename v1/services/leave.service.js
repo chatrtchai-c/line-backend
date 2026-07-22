@@ -6,7 +6,7 @@ const getLeaveStatistic = async (lineUserId, pin) => {
   console.log(`[getLeaveStatistic] ${lineUserId}: ${pin}`)
   const profileData = await getUserProfileByLineId(lineUserId, pin);
 
-  console.log("[getLeaveStatistic] ", JSON.stringify(profileData));
+  console.log("[getLeaveStatistic] ", JSON.stringify(profileData, null, 3));
   
   // ตรวจสอบว่ามีข้อมูล profile หรือไม่ (เหมือนการเช็คว่า Login หรือยัง)
   // if (!profileData || !profileData.lineUuid) {

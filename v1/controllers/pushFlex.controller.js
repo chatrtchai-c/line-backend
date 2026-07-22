@@ -20,7 +20,7 @@ const pushLeaveStatFlex = async (req, res) => {
     try {
       console.log(`[pushLeaveStatFlex] ${lineUuid}: ${pin}`);
       leaveStatistic = await getLeaveStatistic(lineUuid, pin);
-      console.log("[pushLeaveStatFlex] ", JSON.stringify(leaveStatistic));
+      console.log("[pushLeaveStatFlex] ", JSON.stringify(leaveStatistic, null, 3));
     } catch (fetchError) {
       console.error('[Error 1] Failed to fetch leave statistics:', fetchError);
       return res.status(500).json({ success: false, message: 'Failed to fetch leave statistics', error: fetchError.message });
