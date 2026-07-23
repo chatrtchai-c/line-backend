@@ -1,9 +1,7 @@
 const generateLeaveStatFlex = (leaveStatisticData) => {
   const { id, year, statistic } = leaveStatisticData;
 
-  // สร้าง block รายการสถิติการลาแต่ละประเภทเป็นตาราง
   const statItems = statistic.map(stat => {
-    // กำหนดสีถ้ายอดใช้เกินสิทธิ์ ให้เป็นสีแดง ถ้าปกติให้เป็นสีปกติ
     const isExceeded = (stat.used > stat.privileges && stat.privileges > 0) || (stat.privileges === 0 && stat.used > 0);
     const valueColor = isExceeded ? "#ff5252" : "#111111";
 
@@ -52,7 +50,6 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
     };
   });
 
-  // สร้างโครงร่าง Flex Message
   return {
     type: "flex",
     altText: `สถิติการลาของคุณ ปี ${year}`,
@@ -62,7 +59,7 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
       header: {
         type: "box",
         layout: "vertical",
-        backgroundColor: "#00B900", // สีเขียว LINE
+        backgroundColor: "#00B900",
         paddingTop: "25px",
         paddingBottom: "25px",
         paddingStart: "20px",
@@ -115,7 +112,6 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
             type: "separator",
             margin: "lg"
           },
-          // Header ของตาราง
           {
             type: "box",
             layout: "horizontal",
@@ -159,7 +155,6 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
             type: "separator",
             margin: "md"
           },
-          // นำรายการสถิติการลาแต่ละประเภทมาแสดง
           ...statItems
         ]
       }

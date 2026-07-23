@@ -3,7 +3,6 @@ require('dotenv').config();
 const line = require('@line/bot-sdk');
 const { generateRequirePinFlex } = require('../templates/flex/requirePinFlex');
 
-// We use process.env to get credentials since they shouldn't be hardcoded
 const config = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
   channelSecret: process.env.LINE_CHANNEL_SECRET,
@@ -13,10 +12,8 @@ const client = new line.messagingApi.MessagingApiClient({
   channelAccessToken: config.channelAccessToken
 });
 
-// This function processes each individual event
 const handleEvent = async (event) => {
   if (event.type !== 'message' || event.message.type !== 'text') {
-    // ignore non-text-message event
     return Promise.resolve(null);
   }
 
@@ -30,17 +27,14 @@ const handleEvent = async (event) => {
     });
   }
 
-  // create a echoing text message
   const echo = { type: 'text', text: event.message.text };
 
-  // use reply API
   return client.replyMessage({
     replyToken: event.replyToken,
     messages: [echo],
   });
 };
 
-// This is the main controller that receives the HTTP request
 const handleWebhook = (req, res) => {
   Promise
     .all(req.body.events.map(handleEvent))
@@ -53,5 +47,5 @@ const handleWebhook = (req, res) => {
 
 module.exports = {
   handleWebhook,
-  config // Export config so the route can use it for middleware
+  config 
 };
