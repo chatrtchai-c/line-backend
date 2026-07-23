@@ -1,9 +1,21 @@
+const safeText = (val, fallback = "-") => {
+  if (val === undefined || val === null || val === "") return fallback;
+  return String(val);
+};
+
 const generateLeaveStatFlex = (leaveStatisticData) => {
   const { id, year, statistic } = leaveStatisticData;
 
   const statItems = statistic.map(stat => {
     const isExceeded = (stat.used > stat.privileges && stat.privileges > 0) || (stat.privileges === 0 && stat.used > 0);
     const valueColor = isExceeded ? "#ff5252" : "#111111";
+
+    let remaining = stat.remaining;
+    if (remaining === undefined || remaining === null || remaining === "") {
+      if (!isNaN(stat.privileges) && !isNaN(stat.used) && stat.privileges !== "" && stat.used !== "") {
+        remaining = Number(stat.privileges) - Number(stat.used);
+      }
+    }
 
     return {
       type: "box",
@@ -13,7 +25,7 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
       contents: [
         {
           type: "text",
-          text: stat.leaveType,
+          text: safeText(stat.leaveType),
           size: "sm",
           color: "#333333",
           flex: 4,
@@ -22,7 +34,7 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
         },
         {
           type: "text",
-          text: stat.privileges > 0 ? `${stat.privileges}` : "-",
+          text: stat.privileges > 0 ? safeText(stat.privileges) : "-",
           size: "sm",
           color: "#555555",
           flex: 2,
@@ -30,7 +42,7 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
         },
         {
           type: "text",
-          text: `${stat.used}`,
+          text: safeText(stat.used, "0"),
           size: "sm",
           color: valueColor,
           flex: 2,
@@ -39,7 +51,7 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
         },
         {
           type: "text",
-          text: `${stat.privileges}`,
+          text: safeText(remaining),
           size: "sm",
           color: valueColor,
           flex: 2,
