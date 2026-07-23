@@ -41,7 +41,7 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
         },
         {
           type: "text",
-          text: stat.privileges > 0 ? `${stat.remaining}` : "-",
+          text: `${stat.privileges}`,
           size: "sm",
           color: valueColor,
           flex: 2,
@@ -102,7 +102,7 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
               },
               {
                 type: "text",
-                text: id,
+                text: `${id}`,
                 color: "#111111",
                 size: "sm",
                 flex: 2,
