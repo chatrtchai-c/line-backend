@@ -34,20 +34,11 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
         },
         {
           type: "text",
-          text: stat.privileges > 0 ? safeText(stat.privileges) : "-",
+          text: safeText(stat.privileges),
           size: "sm",
           color: "#555555",
           flex: 2,
           align: "center"
-        },
-        {
-          type: "text",
-          text: safeText(stat.used, "0"),
-          size: "sm",
-          color: valueColor,
-          flex: 2,
-          align: "center",
-          weight: "bold"
         },
         {
           type: "text",
@@ -140,14 +131,6 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
               {
                 type: "text",
                 text: "สิทธิ์",
-                color: "#aaaaaa",
-                size: "xs",
-                flex: 2,
-                align: "center"
-              },
-              {
-                type: "text",
-                text: "ใช้ไป",
                 color: "#aaaaaa",
                 size: "xs",
                 flex: 2,
