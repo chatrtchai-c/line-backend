@@ -19,13 +19,17 @@ const LeaveType = {
 
 class LeaveStatItem {
   constructor(year, leaveType, privileges, used) {
-    this.year = year;
-    this.leaveType = leaveType;
-    this.privileges = privileges;
-    this.used = used;
-    this.remaining = privileges - used;
+    const resolvedLeaveType = LeaveType[leaveType] || leaveType;
+
+    this.year = Number(year) || new Date().getFullYear();
+    this.leaveType = resolvedLeaveType || LeaveType.OTHER;
+    this.privileges = Number(privileges) || 0;
+    this.used = Number(used) || 0;
+    this.remaining = this.privileges - this.used;
   }
 }
+
+
 
 class LeaveStatistic {
   constructor(id, year, statistic = []) {
