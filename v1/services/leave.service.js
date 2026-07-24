@@ -13,15 +13,17 @@ const getLeaveStatistic = async (lineUserId, pin) => {
 
   const leaveStatData = await apiClient(`/api/v1/leave/leavestatistic?lineUuid=${lineUserId}&pin=${pin}&id=${id}&year=${year}`, HttpMethod.GET);
 
-  console.log("[leave.service] ", JSON.stringify(leaveStatData, null, 3));
-  const rawList = leaveStatData.statistic || leaveStatData.data || (Array.isArray(leaveStatData) ? leaveStatData : []);
+  const rawList = leaveStatData.statistic;
+  console.log("[leave.service] rawList ", JSON.stringify(rawList, null, 3));
 
   const items = rawList.map(item => new LeaveStatItem(
-    item.year || year,
-    item.leaveType || item.type,
-    item.privileges,
-    item.used
+    item.used,
+    item.year,
+    item.leaveType,
+    item.remaining,
+    item.privileges
   ));
+
 
   return new LeaveStatistic(id, year, items);
 };

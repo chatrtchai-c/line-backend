@@ -18,16 +18,23 @@ const LeaveType = {
 };
 
 class LeaveStatItem {
-  constructor(year, leaveType, privileges, used) {
-    const resolvedLeaveType = LeaveType[leaveType] || leaveType;
+  constructor(used, year, leaveType, remaining, privileges) {
+    const validValues = Object.values(LeaveType);
 
-    this.year = Number(year) || new Date().getFullYear();
-    this.leaveType = resolvedLeaveType || LeaveType.OTHER;
-    this.privileges = Number(privileges) || 0;
-    this.used = Number(used) || 0;
-    this.remaining = this.privileges - this.used;
+    let resolvedLeaveType = LeaveType[leaveType];
+    if (!resolvedLeaveType) {
+      resolvedLeaveType = validValues.includes(leaveType) ? leaveType : LeaveType.OTHER;
+    }
+
+    this.used = used;
+    this.year = year;
+    this.leaveType = resolvedLeaveType;
+    this.remaining = remaining;
+    this.privileges = privileges;
   }
 }
+
+
 
 
 
