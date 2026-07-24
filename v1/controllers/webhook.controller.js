@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 const line = require('@line/bot-sdk');
-const { generateRequirePinFlex } = require('../templates/flex/requirePinFlex');
 
 const config = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
@@ -13,26 +12,8 @@ const client = new line.messagingApi.MessagingApiClient({
 });
 
 const handleEvent = async (event) => {
-  if (event.type !== 'message' || event.message.type !== 'text') {
-    return Promise.resolve(null);
-  }
-
-  if (event.message.text === 'ตรวจสอบสิทธิการลา') {
-    const liffUrl = `https://liff.line.me/${process.env.LINE_LIFF_ID}/pin`;
-    const flexMessage = generateRequirePinFlex(liffUrl);
-    
-    return client.replyMessage({
-      replyToken: event.replyToken,
-      messages: [flexMessage],
-    });
-  }
-
-  const echo = { type: 'text', text: event.message.text };
-
-  return client.replyMessage({
-    replyToken: event.replyToken,
-    messages: [echo],
-  });
+  // ไม่มีการตอบกลับข้อความใดๆ จาก Webhook แล้ว
+  return Promise.resolve(null);
 };
 
 const handleWebhook = (req, res) => {
@@ -47,5 +28,5 @@ const handleWebhook = (req, res) => {
 
 module.exports = {
   handleWebhook,
-  config 
+  config
 };

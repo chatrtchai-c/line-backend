@@ -38,7 +38,8 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
           size: "sm",
           color: "#555555",
           flex: 2,
-          align: "center"
+          wrap: true,
+          align: "start",
         },
         {
           type: "text",
@@ -46,7 +47,8 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
           size: "sm",
           color: valueColor,
           flex: 2,
-          align: "end",
+          align: "start",
+          wrap: true,
           weight: "bold"
         }
       ]
@@ -62,7 +64,7 @@ const generateLeaveStatFlex = (leaveStatisticData) => {
       header: {
         type: "box",
         layout: "vertical",
-        backgroundColor: "#00B900",
+        backgroundColor: "#ff5100",
         paddingTop: "25px",
         paddingBottom: "25px",
         paddingStart: "20px",

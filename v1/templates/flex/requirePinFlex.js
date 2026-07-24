@@ -31,7 +31,7 @@ const generateRequirePinFlex = (liffUrl) => {
           {
             type: "button",
             style: "primary",
-            color: "#00B900",
+            color: "#ff5100",
             action: {
               type: "uri",
               label: "ใส่รหัส PIN",
